@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getApiBaseUrlCandidates, rememberResolvedApiBaseUrl } from "../utils/platform";
 
-const REQUEST_TIMEOUT_MS = 15000;
+const REQUEST_TIMEOUT_MS = 45000;
 const RETRYABLE_STATUS_CODES = new Set([404, 408, 425, 429, 500, 502, 503, 504]);
 
 function readAuthToken() {
@@ -30,6 +30,12 @@ function shouldRetryWithNextBaseUrl(error) {
 }
 
 function buildConnectionError(error) {
+  if (String(error?.code || "").toUpperCase() === "ECONNABORTED") {
+    error.userMessage =
+      "Server response me zyada time lag raha hai. Thodi der baad dobara try karo.";
+    return error;
+  }
+
   error.userMessage =
     "Server se connection nahi ho paaya. Internet ya backend URL check karke dobara try karo.";
   return error;
