@@ -7,6 +7,7 @@
 frontend/android/keystore.properties
 frontend/android/app/*.keystore
 frontend/android/app/*.jks
+frontend/android/.gradle-home/
 *.apk
 *.aab
 
