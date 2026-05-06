@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: chatify-backend
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: OTP_PROVIDER
+        value: gmail
+      - key: OTP_EMAIL_FROM
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_PASSWORD
+        sync: false
+      - key: GMAIL_SMTP_HOST
+        value: smtp.gmail.com
+      - key: ALLOW_DEMO_OTP_IN_PRODUCTION
+        value: "0"
+      - key: OTP_FALLBACK_TO_DEMO_ON_ERROR
+        value: "0"
+      - key: OTP_TTL_MS
+        value: "300000"

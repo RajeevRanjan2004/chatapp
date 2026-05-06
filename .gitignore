@@ -6,6 +6,7 @@
 !.env.example
 !**/.env.example
 !**/.env.railway.example
+!**/.env.render.example
 frontend/android/keystore.properties
 frontend/android/app/*.keystore
 frontend/android/app/*.jks

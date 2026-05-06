@@ -53,6 +53,15 @@ Recommended production env:
 - `OTP_FALLBACK_TO_DEMO_ON_ERROR=0`
 - `CLIENT_ORIGIN=https://YOUR_WEB_DOMAIN,http://localhost,capacitor://localhost,ionic://localhost`
 
+### Render deploy like the Spotify clone
+
+This repo now also includes:
+- [render.yaml](./render.yaml)
+- [RENDER_DEPLOY.md](./RENDER_DEPLOY.md)
+- [backend/.env.render.example](./backend/.env.render.example)
+
+Render is the better choice if you want the same Gmail app-password backend flow that worked in the Spotify clone.
+
 ### Local production check
 
 ```bash

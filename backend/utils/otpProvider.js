@@ -28,7 +28,7 @@ function isProductionEnvironment() {
 function getOtpMode() {
   const requestedProvider = String(process.env.OTP_PROVIDER || "demo").trim().toLowerCase();
   const resendApiKey = String(process.env.RESEND_API_KEY || "").trim();
-  const emailFrom = String(process.env.OTP_EMAIL_FROM || "").trim();
+  const emailFrom = String(process.env.OTP_EMAIL_FROM || process.env.SMTP_FROM || "").trim();
   const gmailUser = String(process.env.GMAIL_USER || "").trim();
   const gmailPassword = String(process.env.GMAIL_PASSWORD || "").trim();
   const gmailSmtpHost = String(process.env.GMAIL_SMTP_HOST || "").trim() || "smtp.gmail.com";
@@ -36,7 +36,7 @@ function getOtpMode() {
   const smtpPort = Number(process.env.SMTP_PORT || "");
   const smtpSecure = String(process.env.SMTP_SECURE || "").trim().toLowerCase();
   const smtpUser = String(process.env.SMTP_USER || "").trim();
-  const smtpPassword = String(process.env.SMTP_PASSWORD || "").trim();
+  const smtpPassword = String(process.env.SMTP_PASSWORD || process.env.SMTP_PASS || "").trim();
 
   if (requestedProvider === "resend" && resendApiKey && emailFrom) {
     return {
@@ -233,8 +233,8 @@ async function sendNodemailerEmail({ email, otpCode, mode }) {
   await transporter.sendMail({
     from: config.emailFrom,
     to: email,
-    subject: "Your Real Chat Time OTP",
-    text: `Your Real Chat Time ${actionLabel} code is ${otpCode}. It expires in ${Math.round(getOtpTtlMs() / 60000)} minutes.`,
+    subject: "Your Chatify OTP",
+    text: `Your Chatify ${actionLabel} code is ${otpCode}. It expires in ${Math.round(getOtpTtlMs() / 60000)} minutes.`,
   });
 }
 
