@@ -1,8 +1,8 @@
 import { Capacitor } from "@capacitor/core";
 
-const RESOLVED_API_BASE_URL_KEY = "rtc_api_base_url";
-const RESOLVED_SOCKET_BASE_URL_KEY = "rtc_socket_base_url";
-const PRODUCTION_API_FALLBACK_URL = "https://real-chat-time-web-production.up.railway.app/api";
+const RESOLVED_API_BASE_URL_KEY = "rtc_api_base_url_v2";
+const RESOLVED_SOCKET_BASE_URL_KEY = "rtc_socket_base_url_v2";
+const PRODUCTION_API_FALLBACK_URL = "https://chatify-backend-mvbc.onrender.com/api";
 
 export function getPlatform() {
   try {

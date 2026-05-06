@@ -31,7 +31,6 @@ function getOtpMode() {
   const emailFrom = String(process.env.OTP_EMAIL_FROM || process.env.SMTP_FROM || "").trim();
   const gmailUser = String(process.env.GMAIL_USER || "").trim();
   const gmailPassword = String(process.env.GMAIL_PASSWORD || "").trim();
-  const gmailSmtpHost = String(process.env.GMAIL_SMTP_HOST || "").trim() || "smtp.gmail.com";
   const smtpHost = String(process.env.SMTP_HOST || "").trim();
   const smtpPort = Number(process.env.SMTP_PORT || "");
   const smtpSecure = String(process.env.SMTP_SECURE || "").trim().toLowerCase();
@@ -53,16 +52,7 @@ function getOtpMode() {
       delivery: "email",
       emailFrom: emailFrom || gmailUser,
       transport: {
-        host: gmailSmtpHost,
-        port: 587,
-        secure: false,
-        requireTLS: true,
-        connectionTimeout: 7000,
-        greetingTimeout: 7000,
-        socketTimeout: 10000,
-        tls: {
-          servername: "smtp.gmail.com",
-        },
+        service: "gmail",
         auth: {
           user: gmailUser,
           pass: gmailPassword,
@@ -300,7 +290,10 @@ async function requestOtpCode({ email, mode, name = "" }) {
     }
 
     cleanupOtp(normalizedEmail);
-    throw error;
+    if (error instanceof OtpError || error?.statusCode) {
+      throw error;
+    }
+    throw new OtpError("Email OTP service is unavailable right now. Please try again later.", 503);
   }
 }
 
