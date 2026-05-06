@@ -14,7 +14,11 @@ Railway will build the frontend, bundle it into the backend image, and serve eve
 
 ## 2. Railway environment variables
 
-Set these variables in Railway for the backend service:
+Set these variables in Railway for the backend service.
+
+Important:
+- Railway's official outbound networking docs say SMTP is only available on Pro and above.
+- On Free, Trial, and Hobby, use an HTTPS mail API such as Resend instead of Gmail SMTP.
 
 ```env
 NODE_ENV=production
@@ -22,11 +26,19 @@ PORT=5000
 MONGO_URI=your-mongodb-connection-string
 JWT_SECRET=replace-with-a-long-random-secret
 CLIENT_ORIGIN=https://real-chat-time-web-production.up.railway.app,http://localhost,capacitor://localhost,ionic://localhost
-OTP_PROVIDER=gmail
-OTP_EMAIL_FROM=your-email@gmail.com
+OTP_PROVIDER=resend
+OTP_EMAIL_FROM=Chatify <otp@yourdomain.com>
 ALLOW_DEMO_OTP_IN_PRODUCTION=0
 OTP_FALLBACK_TO_DEMO_ON_ERROR=0
 OTP_TTL_MS=300000
+RESEND_API_KEY=re_xxxxxxxxx
+```
+
+If you are on Railway Pro and want Gmail SMTP instead, use:
+
+```env
+OTP_PROVIDER=gmail
+OTP_EMAIL_FROM=your-email@gmail.com
 GMAIL_USER=your-email@gmail.com
 GMAIL_PASSWORD=your-16-char-app-password
 GMAIL_SMTP_HOST=smtp.gmail.com
@@ -62,6 +74,7 @@ Expected behavior:
 - response should contain `provider`, `delivery`, `destinationHint`
 - response should not contain `devOtp`
 - OTP should arrive in email inbox/spam
+- if delivery fails, Railway logs now print `[otp] delivery failed` with the provider error
 
 ## 5. Android app config
 

@@ -21,6 +21,10 @@ function getOtpTtlMs() {
   return DEFAULT_OTP_TTL_MS;
 }
 
+function isProductionEnvironment() {
+  return String(process.env.NODE_ENV || "").trim().toLowerCase() === "production";
+}
+
 function getOtpMode() {
   const requestedProvider = String(process.env.OTP_PROVIDER || "demo").trim().toLowerCase();
   const resendApiKey = String(process.env.RESEND_API_KEY || "").trim();
@@ -92,6 +96,7 @@ function getOtpMode() {
 
 function shouldExposeDemoOtp(forceExposeOtp = false) {
   if (forceExposeOtp) return true;
+  if (isProductionEnvironment()) return false;
   const flag = String(process.env.EXPOSE_DEMO_OTP || process.env.ALLOW_DEMO_OTP_IN_PRODUCTION || "")
     .trim()
     .toLowerCase();
@@ -99,6 +104,7 @@ function shouldExposeDemoOtp(forceExposeOtp = false) {
 }
 
 function shouldFallbackToDemoOnError() {
+  if (isProductionEnvironment()) return false;
   const flag = String(process.env.OTP_FALLBACK_TO_DEMO_ON_ERROR || "").trim().toLowerCase();
   return flag === "1" || flag === "true" || flag === "yes";
 }
@@ -272,6 +278,17 @@ async function requestOtpCode({ email, mode, name = "" }) {
       email: normalizedEmail,
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error || "Unknown error");
+    const errorStack = error instanceof Error ? error.stack : undefined;
+
+    console.error("[otp] delivery failed", {
+      provider: config.provider,
+      delivery: config.delivery,
+      destinationHint: maskEmail(normalizedEmail),
+      message: errorMessage,
+      stack: errorStack,
+    });
+
     if (config.provider !== "demo" && shouldFallbackToDemoOnError() && canExposeDemoOtp) {
       return buildOtpResponse({
         message: "Email provider unavailable right now. Demo OTP generated successfully.",

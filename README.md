@@ -47,7 +47,8 @@ Frontend runs on the port Vite chooses (example: `http://localhost:3002`).
 For production, the backend now serves the built frontend from `frontend/dist`, so the app can run as a single web service with Socket.IO and Atlas on the same domain.
 
 Recommended production env:
-- `OTP_PROVIDER=gmail` or another real mail provider
+- `OTP_PROVIDER=resend` on Railway Free/Trial/Hobby because Railway disables outbound SMTP on those plans
+- `OTP_PROVIDER=gmail` only when your host supports outbound SMTP and your Gmail app-password flow is verified
 - `ALLOW_DEMO_OTP_IN_PRODUCTION=0`
 - `OTP_FALLBACK_TO_DEMO_ON_ERROR=0`
 - `CLIENT_ORIGIN=https://YOUR_WEB_DOMAIN,http://localhost,capacitor://localhost,ionic://localhost`

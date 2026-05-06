@@ -4,6 +4,8 @@
 **/.env
 **/.env.*
 !.env.example
+!**/.env.example
+!**/.env.railway.example
 frontend/android/keystore.properties
 frontend/android/app/*.keystore
 frontend/android/app/*.jks
