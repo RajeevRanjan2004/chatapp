@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Chatify</string>
+    <string name="title_activity_main">Chatify</string>
+    <string name="package_name">com.realchattime.app</string>
+    <string name="custom_url_scheme">com.realchattime.app</string>
+</resources>

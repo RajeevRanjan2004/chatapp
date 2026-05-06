@@ -1,0 +1,11 @@
+{
+  "appId": "com.realchattime.app",
+  "appName": "Chatify",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "backgroundColor": "#08111d",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
+}
