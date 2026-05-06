@@ -21,6 +21,14 @@ function getOtpTtlMs() {
   return DEFAULT_OTP_TTL_MS;
 }
 
+function getMailRequestTimeoutMs() {
+  const parsed = Number(process.env.MAIL_REQUEST_TIMEOUT_MS);
+  if (Number.isFinite(parsed) && parsed >= 3000) {
+    return parsed;
+  }
+  return 10000;
+}
+
 function isProductionEnvironment() {
   return String(process.env.NODE_ENV || "").trim().toLowerCase() === "production";
 }
@@ -53,6 +61,9 @@ function getOtpMode() {
       emailFrom: emailFrom || gmailUser,
       transport: {
         service: "gmail",
+        connectionTimeout: getMailRequestTimeoutMs(),
+        greetingTimeout: getMailRequestTimeoutMs(),
+        socketTimeout: getMailRequestTimeoutMs(),
         auth: {
           user: gmailUser,
           pass: gmailPassword,
@@ -219,13 +230,27 @@ async function sendNodemailerEmail({ email, otpCode, mode }) {
   const config = getOtpMode();
   const actionLabel = mode === "signup" ? "account verification" : "login";
   const transporter = nodemailer.createTransport(config.transport);
+  const mailTimeoutMs = getMailRequestTimeoutMs();
 
-  await transporter.sendMail({
-    from: config.emailFrom,
-    to: email,
-    subject: "Your Chatify OTP",
-    text: `Your Chatify ${actionLabel} code is ${otpCode}. It expires in ${Math.round(getOtpTtlMs() / 60000)} minutes.`,
-  });
+  try {
+    await Promise.race([
+      transporter.sendMail({
+        from: config.emailFrom,
+        to: email,
+        subject: "Your Chatify OTP",
+        text: `Your Chatify ${actionLabel} code is ${otpCode}. It expires in ${Math.round(getOtpTtlMs() / 60000)} minutes.`,
+      }),
+      new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new OtpError("Email provider timed out. Please try again later.", 503));
+        }, mailTimeoutMs);
+      }),
+    ]);
+  } finally {
+    if (typeof transporter.close === "function") {
+      transporter.close();
+    }
+  }
 }
 
 async function requestOtpCode({ email, mode, name = "" }) {
